@@ -1,0 +1,35 @@
+# Mini ECU — MSVC / nmake build file
+# Usage: nmake /f Makefile.nmake
+
+TARGET   = mini_ecu.exe
+CC       = cl
+INC_DIR  = include
+SRC_DIR  = src
+OBJ_DIR  = build
+
+CFLAGS = /nologo /W4 /I$(INC_DIR) /DECU_PLATFORM_NATIVE=1 /Zi /Od
+
+SRCS = \
+    $(SRC_DIR)\main.c         \
+    $(SRC_DIR)\Mcal.c         \
+    $(SRC_DIR)\Can_Driver.c   \
+    $(SRC_DIR)\Os.c           \
+    $(SRC_DIR)\EngineCtrl.c   \
+    $(SRC_DIR)\Uds.c          \
+    $(SRC_DIR)\Bootloader.c   \
+    $(SRC_DIR)\VariantCoding.c
+
+all: $(OBJ_DIR) $(OBJ_DIR)\$(TARGET)
+
+$(OBJ_DIR):
+    if not exist $(OBJ_DIR) mkdir $(OBJ_DIR)
+
+$(OBJ_DIR)\$(TARGET): $(SRCS)
+    $(CC) $(CFLAGS) /Fe:$(OBJ_DIR)\$(TARGET) $(SRCS)
+    @echo Build complete: $(OBJ_DIR)\$(TARGET)
+
+run: all
+    $(OBJ_DIR)\$(TARGET)
+
+clean:
+    if exist $(OBJ_DIR) rmdir /s /q $(OBJ_DIR)
